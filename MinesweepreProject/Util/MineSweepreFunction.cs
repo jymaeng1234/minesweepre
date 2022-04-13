@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MinesweepreProject.Util
 {
-    class MineSweepreFunction
+    public class MineSweepreFunction
     {
-        public bool[,] CreateMineLocations(int width, int height, int mineCount)
+        public static bool[,] CreateMineLocations(int width, int height, int mineCount)
         {
             //지뢰는 랜덤하게 생성됩니다.
             //지뢰는 중복되지 않습니다.
@@ -32,7 +32,7 @@ namespace MinesweepreProject.Util
             return MineMatrix;
         }
 
-        public List<int> GetRandomNumberList(int maxCount, int selectCount)
+        public static List<int> GetRandomNumberList(int maxCount, int selectCount)
         {
             List<int> selectedList = new List<int>();
             int selectedNum;
@@ -49,5 +49,50 @@ namespace MinesweepreProject.Util
             return selectedList;
         }
 
+
+        public static int[,] CreateMineMap(bool[,] mineLocations)
+        {
+            //주변8칸의 지뢰수를 반환합니다.
+            //주변에 지뢰가 없거나, 해당위치가 지뢰인 경우에는 0을 반환합니다.
+
+            int mineRow = mineLocations.GetLength(0);
+            int mineCol = mineLocations.GetLength(1);
+
+            int[,] mineMap = new int[mineRow, mineCol];
+
+            for (int idxRow = 0; idxRow < mineRow; idxRow++)
+            {
+                for (int idxCol = 0; idxCol < mineCol ; idxCol++)
+                {
+                    mineMap[idxRow, idxCol] = GetSurroundMineCount(idxRow, idxCol, mineLocations);
+                }
+            }
+
+            return mineMap;
+        }
+
+        public static int GetSurroundMineCount(int x, int y, bool[,] mineLocations)
+        {
+            int mineCount = 0;
+            int mineRow = mineLocations.GetLength(0);
+            int mineCol = mineLocations.GetLength(1);
+
+            for (int idxRow = x - 1; idxRow <= x + 1; idxRow++)
+            {
+                for (int idxCol = y - 1; idxCol <= y + 1; idxCol++)
+                {
+                    if (idxRow == x && idxCol == y) continue;
+                    if (idxRow < 0 || idxCol < 0) continue;
+                    if (idxRow == mineRow || idxCol == mineCol) continue;
+
+                    if (mineLocations[idxRow, idxCol]) mineCount++;
+
+
+                }
+            }
+
+            return mineCount;            
+        
+        }
     }
 }
